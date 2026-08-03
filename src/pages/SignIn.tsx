@@ -2,15 +2,14 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
-import { Logo, GoogleIcon } from '@/components/Logo';
+import { Logo } from '@/components/Logo';
 
 export default function SignIn() {
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -20,16 +19,6 @@ export default function SignIn() {
     setLoading(false);
     if (error) setError(error);
     else navigate('/app/dashboard');
-  }
-
-  async function handleGoogle() {
-    setError(null);
-    setGoogleLoading(true);
-    const { error } = await signInWithGoogle();
-    if (error) {
-      setError(error);
-      setGoogleLoading(false);
-    }
   }
 
   return (
@@ -49,22 +38,7 @@ export default function SignIn() {
             </div>
           )}
 
-          <button
-            onClick={handleGoogle}
-            disabled={googleLoading || loading}
-            className="btn-secondary w-full mt-6"
-          >
-            <GoogleIcon size={20} />
-            {googleLoading ? 'Connecting to Google…' : 'Continue with Google'}
-          </button>
-
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-xs text-slate-400 font-medium">or</span>
-            <div className="flex-1 h-px bg-slate-200" />
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 mt-6">
             <div>
               <label className="label">Email</label>
               <input
@@ -87,7 +61,7 @@ export default function SignIn() {
                 placeholder="Your password"
               />
             </div>
-            <button type="submit" className="btn-primary w-full" disabled={loading || googleLoading}>
+            <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? 'Signing in…' : 'Sign in'}
               {!loading && <ArrowRight size={18} />}
             </button>

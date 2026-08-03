@@ -17,7 +17,6 @@ interface AuthContextValue {
     plan?: string;
   }) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -132,17 +131,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null };
   }
 
-  async function signInWithGoogle(): Promise<{ error: string | null }> {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/app/dashboard`,
-      },
-    });
-    if (error) return { error: error.message };
-    return { error: null };
-  }
-
   async function signOut() {
     await supabase.auth.signOut();
     setProfile(null);
@@ -155,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ session, profile, company, loading, signUp, signIn, signInWithGoogle, signOut, refreshProfile }}
+      value={{ session, profile, company, loading, signUp, signIn, signOut, refreshProfile }}
     >
       {children}
     </AuthContext.Provider>
